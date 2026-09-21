@@ -140,16 +140,20 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Enable compressed, cache-friendly static files only in production. The
-# default development storage serves files directly from STATICFILES_DIRS.
+# Serve static files with WhiteNoise in production. On serverless hosts
+# (e.g. Vercel) there is no build/collectstatic step, so WhiteNoise is told to
+# use the staticfiles finders and serve directly from STATICFILES_DIRS.
 if not DEBUG and whitenoise is not None:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+    # Serve straight from the app's static sources — no collectstatic needed.
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
     STORAGES = {
         "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"
         },
     }
-    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

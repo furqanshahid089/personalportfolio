@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#10162c"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d5efc"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1050" cy="120" r="220" fill="url(#accent)" opacity="0.18"/>
+  <circle cx="150" cy="560" r="180" fill="url(#accent)" opacity="0.14"/>
+  <rect x="80" y="150" width="72" height="72" rx="16" fill="url(#accent)"/>
+  <text x="116" y="200" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="34" font-weight="700" fill="#ffffff">FS</text>
+  <text x="80" y="320" font-family="'Space Grotesk', sans-serif" font-size="66" font-weight="700" fill="#e8ecf6">Furqan Shahid</text>
+  <text x="80" y="390" font-family="'Inter', sans-serif" font-size="32" font-weight="600" fill="#22d3ee">Python &amp; Django Developer</text>
+  <text x="80" y="440" font-family="'Inter', sans-serif" font-size="30" font-weight="500" fill="#a2acc4">Flutter Developer | Data Science Student</text>
+  <text x="80" y="520" font-family="'Inter', sans-serif" font-size="26" fill="#a2acc4">AI &amp; Automation Enthusiast · Lahore, Pakistan</text>
+</svg>

@@ -38,9 +38,22 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = env_bool("DEBUG", True)
 
+# Hosts. Always allow localhost and any *.vercel.app subdomain so the app runs
+# on Vercel even if ALLOWED_HOSTS is not set in the dashboard.
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
+ALLOWED_HOSTS += [".vercel.app", ".now.sh"]
 
+# Vercel exposes the current deployment host in VERCEL_URL (without scheme).
+_vercel_url = os.environ.get("VERCEL_URL")
+if _vercel_url:
+    ALLOWED_HOSTS.append(_vercel_url)
+
+# CSRF trusted origins must include the scheme. Trust the *.vercel.app domain
+# so admin/form POSTs work in production.
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
+CSRF_TRUSTED_ORIGINS += ["https://*.vercel.app"]
+if _vercel_url:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{_vercel_url}")
 
 
 # --- Applications --------------------------------------------------------

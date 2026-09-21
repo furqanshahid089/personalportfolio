@@ -109,10 +109,17 @@ ASGI_APPLICATION = "myproject.asgi.application"
 # --- Database ------------------------------------------------------------
 # Defaults to SQLite for development. Set DATABASE_URL (e.g. a PostgreSQL
 # URL) in production and the app will use it automatically.
+#
+# On serverless hosts (e.g. Vercel) the project root is read-only; only /tmp is
+# writable. When no DATABASE_URL is set there, point SQLite at /tmp so the app
+# still runs (data is ephemeral — use a real DATABASE_URL for persistence).
+_on_serverless = bool(os.environ.get("VERCEL") or os.environ.get("VERCEL_URL"))
+_sqlite_path = "/tmp/db.sqlite3" if _on_serverless else str(BASE_DIR / "db.sqlite3")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": _sqlite_path,
     }
 }
 

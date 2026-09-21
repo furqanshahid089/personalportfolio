@@ -54,7 +54,7 @@ def home(request):
         "services": _safe(lambda: Service.objects.all()),
         "timeline": _safe(lambda: TimelineItem.objects.all()),
     }
-    return render(request, "personalpotfolio/index.html", context)
+    return render(request, "index.html", context)
 
 
 @require_POST

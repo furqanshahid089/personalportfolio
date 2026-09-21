@@ -30,6 +30,15 @@ def env_list(key, default=""):
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
+def env_int(key, default):
+    """Read an integer environment variable, falling back on empty/invalid values."""
+    raw = os.environ.get(key, "")
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return default
+
+
 # --- Core security settings ---------------------------------------------
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
@@ -184,7 +193,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
+    SECURE_HSTS_SECONDS = env_int("SECURE_HSTS_SECONDS", 31536000)
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

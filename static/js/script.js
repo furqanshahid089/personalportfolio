@@ -1,7 +1,7 @@
 /* ==========================================================================
    Furqan Shahid — Portfolio interactions
    Vanilla JS, no dependencies. Handles theme, navigation, scroll behaviour,
-   reveal animations and the AJAX contact form.
+   reveal animations and the contact form (opens the user's email client).
    ========================================================================== */
 (function () {
   "use strict";
@@ -124,17 +124,14 @@
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   /* ---------------------------------------------------------------------
-     6. Contact form — client validation + async submission
+     6. Contact form — client validation, then open the user's email client
+     (no backend required for a static site)
      --------------------------------------------------------------------- */
+  const CONTACT_EMAIL = "furqanshahid089@gmail.com";
   const form = document.getElementById("contact-form");
   if (!form) return;
 
   const statusEl = form.querySelector(".form-status");
-
-  function getCookie(name) {
-    const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-    return match ? decodeURIComponent(match[2]) : null;
-  }
 
   function setError(fieldId, message) {
     const errEl = document.getElementById(fieldId + "-error");
@@ -165,38 +162,26 @@
     return ok;
   }
 
-  form.addEventListener("submit", async function (event) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
     if (statusEl) { statusEl.textContent = ""; statusEl.className = "form-status"; }
     if (!validate()) return;
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalHTML = submitBtn ? submitBtn.innerHTML : "";
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = "Sending…"; }
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const message = form.message.value.trim();
 
-    try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        headers: {
-          "X-CSRFToken": getCookie("csrftoken") || "",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        body: new FormData(form),
-      });
-      const data = await response.json();
+    // Build a mailto link that pre-fills the user's email client.
+    const subject = encodeURIComponent("Portfolio contact from " + name);
+    const body = encodeURIComponent(message + "\n\n- " + name + " (" + email + ")");
+    window.location.href =
+      "mailto:" + CONTACT_EMAIL + "?subject=" + subject + "&body=" + body;
 
-      if (statusEl) {
-        statusEl.textContent = data.message;
-        statusEl.className = "form-status " + (data.ok ? "success" : "error");
-      }
-      if (data.ok) form.reset();
-    } catch (err) {
-      if (statusEl) {
-        statusEl.textContent = "Something went wrong. Please try again.";
-        statusEl.className = "form-status error";
-      }
-    } finally {
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalHTML; }
+    if (statusEl) {
+      statusEl.textContent =
+        "Opening your email app... if nothing happens, email me at " + CONTACT_EMAIL;
+      statusEl.className = "form-status success";
     }
+    form.reset();
   });
 })();

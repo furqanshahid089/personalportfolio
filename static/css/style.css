@@ -435,3 +435,42 @@ em { color: var(--accent-2); font-style: normal; }
   .reveal { opacity: 1; transform: none; }
   .float-pill { animation: none; }
 }
+
+/* --------------------------------------------------------------------------
+   19. Midnight Indigo ambient background (theme polish)
+   -------------------------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 60vw at 12% -10%, rgba(109, 94, 252, .18), transparent 60%),
+    radial-gradient(55vw 55vw at 100% 0%, rgba(34, 211, 238, .12), transparent 55%),
+    radial-gradient(50vw 50vw at 50% 120%, rgba(109, 94, 252, .10), transparent 60%);
+  transition: opacity var(--transition);
+}
+
+html[data-theme="light"] body::before {
+  background:
+    radial-gradient(60vw 60vw at 12% -10%, rgba(109, 94, 252, .10), transparent 60%),
+    radial-gradient(55vw 55vw at 100% 0%, rgba(34, 211, 238, .08), transparent 55%);
+}
+
+/* Gradient accent on primary section headings for a cohesive, premium feel */
+.section-heading h2 em,
+.hero-copy h1 em {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Slightly stronger, theme-aware card elevation on hover */
+html[data-theme="dark"] .skill-card:hover,
+html[data-theme="dark"] .project-card:hover,
+html[data-theme="dark"] .service-card:hover {
+  box-shadow: 0 16px 40px rgba(109, 94, 252, .18);
+}

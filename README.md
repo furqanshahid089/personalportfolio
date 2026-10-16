@@ -1,14 +1,15 @@
 # Furqan Shahid — Personal Portfolio
 
 A modern, responsive personal portfolio for **Furqan Shahid** — a BS Data Science
-student and developer from Lahore, Pakistan. Built as a fast, static website with
-plain **HTML, CSS, and JavaScript** (no framework, no backend).
+student and developer from Lahore, Pakistan. Built with **HTML, CSS, and
+JavaScript** on the front end and a small **Node.js + Express** server on the
+back end (no Python, no database).
 
 ## Overview
 
 A single-page portfolio with sections for Home, About, Skills, Projects,
-Experience, Services, Education, Resume, and Contact. It showcases Furqan's
-skills and projects and gives visitors easy ways to get in touch.
+Experience, Services, Education, Resume, and Contact. The Express server serves
+the site and provides a contact API that stores submissions in `messages.json`.
 
 ## Features
 
@@ -17,67 +18,81 @@ skills and projects and gives visitors easy ways to get in touch.
 - Sticky navbar, mobile hamburger menu, smooth scrolling, active-section highlight
 - Reveal-on-scroll animations that respect `prefers-reduced-motion`
 - Interactive skill badges, project cards, experience, services and timeline
-- Contact form that opens your email client (via `mailto`) — no backend needed
+- **Working contact form** — submits to the Node API and saves to `messages.json`
+  (falls back to opening your email client if no server is running)
 - SEO: title/description, Open Graph, Twitter cards, Person schema (JSON-LD), favicon
-- Fast and lightweight: no build step, deferred JS, `font-display: swap`
 
 ## Tech Stack
 
-- **HTML5** — semantic, accessible markup
-- **CSS3** — custom properties, Grid & Flexbox, responsive, glassmorphism
-- **JavaScript (ES6)** — vanilla, no dependencies
-- Google Fonts (Inter, Space Grotesk) and Font Awesome icons via CDN
+- **Front end:** HTML5, CSS3 (Grid & Flexbox, custom properties), vanilla JavaScript
+- **Back end:** Node.js + Express
+- **Storage:** `messages.json` (simple file-based, no database)
+- Google Fonts (Inter, Space Grotesk) and Font Awesome via CDN
 
 ## Project Structure
 
 ```text
 personal portfolio/
+├── server.js                  # Express server + contact API
+├── package.json               # Node dependencies & scripts
 ├── index.html                 # The whole site (all sections)
 ├── static/
 │   ├── css/style.css          # Styles + Midnight Indigo theme
-│   ├── js/script.js           # Nav, theme, animations, contact
+│   ├── js/script.js           # Nav, theme, animations, contact fetch
 │   ├── icons/favicon.svg
 │   ├── images/og-image.svg
 │   └── assets/                # Resume PDF, etc.
-├── screenshots/               # Add mobile/tablet/desktop captures here
+├── messages.json              # Created at runtime (git-ignored)
+├── screenshots/
 └── README.md
 ```
 
-## Run Locally
+## Setup & Run
 
-It's a static site — just open `index.html` in a browser. For a local server
-(recommended, so relative paths and the favicon load correctly):
+Requires **Node.js 18+**.
 
 ```bash
-# Python (any version)
-python -m http.server 8000
-# then open http://localhost:8000
+# 1. Install dependencies
+npm install
+
+# 2. Start the server
+npm start
+
+# 3. Open the site
+#    http://localhost:3000
 ```
 
-Or use the VS Code **Live Server** extension.
+Submit the contact form and the message is appended to `messages.json` in the
+project root.
 
-## Deploy to Vercel
+## Contact API
 
-1. Push this folder to a GitHub repository.
-2. On [vercel.com](https://vercel.com), click **Add New → Project** and import the repo.
-3. Framework preset: **Other** (it's a plain static site — no build command needed).
-4. Click **Deploy**. Vercel serves `index.html` and the `static/` assets directly.
+`POST /api/contact` — JSON body: `{ "name", "email", "message" }`
 
-No environment variables, no server, no database — nothing can crash at runtime.
+- Validates the input (name required, valid email, message ≥ 10 chars)
+- Appends the message to `messages.json`
+- Returns `{ ok: true, message }` on success or `{ ok: false, message }` on error
 
-You can also deploy the same way on **Netlify** or **GitHub Pages**.
+## Deploy
+
+The site can be deployed to any Node host (Render, Railway, Fly.io, a VPS, etc.):
+
+1. Push the repository to the host.
+2. Ensure the start command is `npm start` and Node 18+ is available.
+3. The host provides a `PORT` environment variable, which the server reads
+   automatically.
+
+> **Note:** On serverless/ephemeral hosts, `messages.json` is not persistent.
+> For durable storage, swap the file read/write in `server.js` for a database
+> or an email service.
 
 ## Editing Content
 
-Everything is in plain HTML/CSS/JS, so you can edit freely:
-
 - **Text, projects, skills, experience** — edit `index.html`
-- **Colors, spacing, theme** — edit `static/css/style.css` (see the `:root` and
-  `[data-theme]` variables at the top)
+- **Colors, spacing, theme** — edit `static/css/style.css` (`:root` / `[data-theme]`)
 - **Behavior (nav, theme, contact)** — edit `static/js/script.js`
-- **Resume** — replace `static/assets/Furqan_Shahid_CV.pdf` with your own file
-- **Contact email** — update `CONTACT_EMAIL` in `static/js/script.js` and the
-  `mailto:` links in `index.html`
+- **Contact API / storage** — edit `server.js`
+- **Resume** — replace `static/assets/Furqan_Shahid_CV.pdf`
 
 ## Contact
 

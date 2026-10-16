@@ -1,3 +1,11 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Runtime data (contact form submissions)
+messages.json
+
 # OS files
 .DS_Store
 Thumbs.db

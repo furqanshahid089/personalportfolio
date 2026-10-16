@@ -398,8 +398,8 @@
           </div>
         </div>
 
-        <!-- Contact form: opens the user's email client (no backend needed) -->
-        <form class="contact-form reveal" id="contact-form" novalidate>
+        <!-- Contact form: submits to the Node API; falls back to email if offline -->
+        <form class="contact-form reveal" id="contact-form" method="post" action="/api/contact" novalidate>
           <div class="form-field">
             <label for="name">Name</label>
             <input id="name" name="name" type="text" autocomplete="name" required>

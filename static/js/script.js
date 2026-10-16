@@ -162,7 +162,14 @@
     return ok;
   }
 
-  form.addEventListener("submit", function (event) {
+  function mailtoFallback(name, email, message) {
+    const subject = encodeURIComponent("Portfolio contact from " + name);
+    const body = encodeURIComponent(message + "\n\n- " + name + " (" + email + ")");
+    window.location.href =
+      "mailto:" + CONTACT_EMAIL + "?subject=" + subject + "&body=" + body;
+  }
+
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
     if (statusEl) { statusEl.textContent = ""; statusEl.className = "form-status"; }
     if (!validate()) return;
@@ -171,17 +178,35 @@
     const email = form.email.value.trim();
     const message = form.message.value.trim();
 
-    // Build a mailto link that pre-fills the user's email client.
-    const subject = encodeURIComponent("Portfolio contact from " + name);
-    const body = encodeURIComponent(message + "\n\n- " + name + " (" + email + ")");
-    window.location.href =
-      "mailto:" + CONTACT_EMAIL + "?subject=" + subject + "&body=" + body;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalHTML = submitBtn ? submitBtn.innerHTML : "";
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = "Sending..."; }
 
-    if (statusEl) {
-      statusEl.textContent =
-        "Opening your email app... if nothing happens, email me at " + CONTACT_EMAIL;
-      statusEl.className = "form-status success";
+    try {
+      // Send to the Node/Express contact API.
+      const response = await fetch(form.action || "/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data = await response.json();
+
+      if (statusEl) {
+        statusEl.textContent = data.message;
+        statusEl.className = "form-status " + (data.ok ? "success" : "error");
+      }
+      if (data.ok) form.reset();
+    } catch (err) {
+      // No server (e.g. opened as a plain file) — fall back to the email client.
+      if (statusEl) {
+        statusEl.textContent =
+          "Opening your email app... if nothing happens, email me at " + CONTACT_EMAIL;
+        statusEl.className = "form-status success";
+      }
+      mailtoFallback(name, email, message);
+      form.reset();
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalHTML; }
     }
-    form.reset();
   });
 })();
